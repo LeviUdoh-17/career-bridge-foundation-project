@@ -46,9 +46,31 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+
+  /* Career Bridge brand tokens */
+  --color-brand-primary: var(--brand-primary);
+  --color-brand-accent: var(--brand-accent);
+  --color-brand-success: var(--brand-success);
+  --color-brand-warning: var(--brand-warning);
+  --color-brand-danger: var(--brand-danger);
+  --color-surface: var(--surface);
+  --color-surface-card: var(--surface-card);
+  --color-text-primary: var(--text-primary);
+  --color-text-muted: var(--text-muted);
 }
 
 :root {
+  /* Career Bridge brand values */
+  --brand-primary: #1E3A5F;
+  --brand-accent: #F4A726;
+  --brand-success: #16A34A;
+  --brand-warning: #D97706;
+  --brand-danger: #DC2626;
+  --surface: #F8FAFC;
+  --surface-card: #FFFFFF;
+  --text-primary: #0F172A;
+  --text-muted: #64748B;
+
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
