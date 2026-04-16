@@ -1,7 +1,8 @@
 import Navbar from "@/components/layout/Navbar";
 import SimulationCard from "@/components/home/SimulationCard";
-import { getSimulation } from "@/lib/data/simulations";
 import type { Metadata } from "next";
+import type { Simulation } from "@/lib/types";
+
 
 export const metadata: Metadata = {
   title: "Career Bridge Foundation — Portfolio Simulations",
@@ -9,14 +10,21 @@ export const metadata: Metadata = {
     "Prove your capability through realistic, scenario-based assessments built for early-career professionals.",
 };
 
-const SIMULATION_IDS = ["nexus-bank-pm-v1"];
+export default async function Home() {
+  let simulations: Simulation[] = [];
 
-export default function Home() {
-  const simulations = SIMULATION_IDS.flatMap((id) => {
-    const sim = getSimulation(id);
-    if (!sim) return [];
-    return [sim];
-  });
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000"}/api/simulations`, {
+      cache: "no-store",
+    });
+
+    if (res.ok) {
+      const json = await res.json();
+      simulations = json.simulations || [];
+    }
+  } catch (error) {
+    console.error("Failed to fetch simulations:", error);
+  }
 
   return (
     <div className="min-h-screen bg-surface flex flex-col">
@@ -87,10 +95,10 @@ export default function Home() {
                   id={sim.id}
                   title={sim.title}
                   discipline={sim.discipline}
-                  company={sim.company}
-                  industry={sim.industry}
-                  candidateRole={sim.candidateRole}
-                  estimatedMinutes={sim.estimatedMinutes}
+                  company={sim.company_name}
+                  // industry={sim.industry}
+                  // candidateRole={sim.candidateRole}
+                  // estimatedMinutes={sim.estimatedMinutes}
                 />
               ))}
             </div>

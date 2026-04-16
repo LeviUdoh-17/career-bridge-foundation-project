@@ -1,3 +1,54 @@
+/**
+ * @swagger
+ * /api/evaluate:
+ *   post:
+ *     summary: Evaluate a completed attempt
+ *     description: Evaluates all three prompt responses for an attempt, calculates the overall score, and stores the final result.
+ *     tags:
+ *       - Evaluation
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/EvaluateRequest'
+ *     responses:
+ *       200:
+ *         description: Evaluation completed successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/EvaluateSuccessResponse'
+ *       202:
+ *         description: Evaluation saved but queued for manual review or email follow-up
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *       400:
+ *         description: Missing attempt id or simulation context
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       404:
+ *         description: Attempt or simulation not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 

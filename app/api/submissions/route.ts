@@ -1,6 +1,51 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 
+/**
+ * @swagger
+ * /api/submissions:
+ *   post:
+ *     summary: Submit a prompt response
+ *     description: Saves a candidate response for a prompt. Supports typed responses, URL submissions, and file uploads.
+ *     tags:
+ *       - Submissions
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             oneOf:
+ *               - $ref: '#/components/schemas/TypedSubmissionRequest'
+ *               - $ref: '#/components/schemas/UrlSubmissionRequest'
+ *         multipart/form-data:
+ *           schema:
+ *             $ref: '#/components/schemas/FileSubmissionRequest'
+ *     responses:
+ *       200:
+ *         description: Submission saved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/SubmissionSuccessResponse'
+ *       400:
+ *         description: Invalid submission payload
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       404:
+ *         description: Attempt not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Server error while saving or processing the submission
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 // PDF and Word text extraction (runs server-side only)
 async function extractTextFromFile(
   buffer: Buffer,

@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation'
-import { getSimulation } from '@/lib/data/simulations'
+import { getSimulationById } from '@/lib/data/simulations.server'
 import SimulationHero from '@/components/simulation/SimulationHero'
 import VideoPlayerWrapper from '@/components/simulation/VideoPlayerWrapper'
 import ScenarioBrief from '@/components/simulation/ScenarioBrief'
@@ -13,7 +13,7 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params
-  const simulation = getSimulation(id)
+  const simulation = await getSimulationById(id)
 
   if (!simulation) return { title: 'Simulation not found' }
 
@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function SimulatePage({ params }: Props) {
   const { id } = await params
-  const simulation = getSimulation(id)
+  const simulation = await getSimulationById(id)
 
   if (!simulation) notFound()
 
