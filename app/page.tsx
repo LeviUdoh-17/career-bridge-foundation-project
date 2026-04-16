@@ -251,118 +251,56 @@ export default function Home() {
             </span>
           </div>
           <h2
-            className="text-3xl md:text-4xl font-bold mb-16"
+            className="text-3xl md:text-4xl font-bold mb-5"
             style={{ color: NAVY, lineHeight: 1.2 }}
           >
             Prove Your Capability
           </h2>
 
-          <div
-            className="grid grid-cols-1 md:grid-cols-3 gap-px"
-            style={{ backgroundColor: BORDER }}
+          <p
+            className="text-sm font-light mb-12 md:whitespace-nowrap"
+            style={{ color: "#555", lineHeight: 1.75 }}
           >
-            {/* Product Management — Available */}
-            <div className="relative bg-white p-10 flex flex-col">
-              <div
-                className="absolute top-8 right-8 w-2 h-2 rounded-full"
-                style={{ backgroundColor: TEAL }}
-              />
-              <span
-                className="text-xs font-semibold uppercase mb-1"
-                style={{ color: TEAL, letterSpacing: "0.18em" }}
-              >
-                Available now
-              </span>
-              <span
-                className="text-xs font-semibold uppercase mb-7"
-                style={{ color: NAVY, letterSpacing: "0.18em" }}
-              >
-                01
-              </span>
-              <h3 className="text-base font-bold mb-4" style={{ color: NAVY, lineHeight: 1.4 }}>
-                Product Management
-              </h3>
-              <p className="text-sm flex-1" style={{ color: "#666", lineHeight: 1.75 }}>
-                Navigate real product decisions, define strategy, and demonstrate
-                commercial thinking across a realistic business scenario.
-              </p>
-              <a
-                href="#"
-                className="arrow-link mt-8 text-sm font-medium inline-flex items-center gap-1"
-                style={{ color: TEAL }}
-              >
-                Start simulation →
-              </a>
-            </div>
+            Workplace simulations across multiple disciplines, built around real industry scenarios and verified by practitioners.
+          </p>
 
-            {/* Project Management — Coming Soon */}
-            <div className="relative bg-white p-10 flex flex-col">
-              <div
-                className="absolute top-8 right-8 w-2 h-2 rounded-full"
-                style={{ backgroundColor: BORDER }}
-              />
-              <span
-                className="text-xs font-semibold uppercase mb-1"
-                style={{ color: "#aaa", letterSpacing: "0.18em" }}
-              >
-                Coming soon
-              </span>
-              <span
-                className="text-xs font-semibold uppercase mb-7"
-                style={{ color: NAVY, letterSpacing: "0.18em" }}
-              >
-                02
-              </span>
-              <h3 className="text-base font-bold mb-4" style={{ color: NAVY, lineHeight: 1.4 }}>
-                Project Management
-              </h3>
-              <p className="text-sm flex-1" style={{ color: "#666", lineHeight: 1.75 }}>
-                Lead a project through ambiguity, manage stakeholders, and
-                demonstrate delivery capability in a structured workplace scenario.
-              </p>
+          {/* Discipline pills */}
+          <div className="flex flex-wrap gap-3 mb-12">
+            {[
+              "Product Management",
+              "Project Management",
+              "Cyber Security",
+              "Cloud DevOps",
+              "Customer Service",
+              "Healthcare Assistance",
+              "Data Analytics",
+              "SEO Analysis",
+              "Business Analysis",
+            ].map((discipline) => (
               <a
-                href="#"
-                className="arrow-link mt-8 text-sm font-medium inline-flex items-center gap-1"
-                style={{ color: "#aaa" }}
+                key={discipline}
+                href="/simulations"
+                className="discipline-pill text-xs font-medium uppercase px-5 py-3"
+                style={{
+                  border: `1px solid ${BORDER}`,
+                  color: NAVY,
+                  letterSpacing: "0.12em",
+                  transition: "background-color 0.15s, color 0.15s, border-color 0.15s",
+                }}
               >
-                Join waitlist →
+                {discipline}
               </a>
-            </div>
-
-            {/* Cyber Security — Coming Soon */}
-            <div className="relative bg-white p-10 flex flex-col">
-              <div
-                className="absolute top-8 right-8 w-2 h-2 rounded-full"
-                style={{ backgroundColor: BORDER }}
-              />
-              <span
-                className="text-xs font-semibold uppercase mb-1"
-                style={{ color: "#aaa", letterSpacing: "0.18em" }}
-              >
-                Coming soon
-              </span>
-              <span
-                className="text-xs font-semibold uppercase mb-7"
-                style={{ color: NAVY, letterSpacing: "0.18em" }}
-              >
-                03
-              </span>
-              <h3 className="text-base font-bold mb-4" style={{ color: NAVY, lineHeight: 1.4 }}>
-                Cyber Security
-              </h3>
-              <p className="text-sm flex-1" style={{ color: "#666", lineHeight: 1.75 }}>
-                Assess risk, respond to incidents, and demonstrate security
-                judgement aligned to UK industry frameworks.
-              </p>
-              <a
-                href="#"
-                className="arrow-link mt-8 text-sm font-medium inline-flex items-center gap-1"
-                style={{ color: "#aaa" }}
-              >
-                Join waitlist →
-              </a>
-            </div>
+            ))}
           </div>
+
+          {/* CTA button */}
+          <a
+            href="/simulations"
+            className="inline-flex items-center px-7 py-3.5 text-sm font-medium text-white"
+            style={{ backgroundColor: NAVY }}
+          >
+            Explore All Simulations →
+          </a>
         </div>
       </section>
 

@@ -69,3 +69,19 @@ body {
 .arrow-link:hover {
   opacity: 0.75;
 }
+
+/* ── Discipline pills ───────────────────────────────── */
+.discipline-pill:hover {
+  background-color: #003359;
+  color: #ffffff !important;
+  border-color: #003359 !important;
+}
+
+/* ── Discipline cards (simulations index) ───────────── */
+.discipline-card {
+  outline: 1px solid transparent;
+  transition: outline-color 0.15s;
+}
+.discipline-card:hover {
+  outline-color: #006FAD;
+}

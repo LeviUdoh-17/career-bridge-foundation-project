@@ -12,7 +12,8 @@
       "Bash(node -e \"const l = require\\('lucide-react'\\); console.log\\(['Instagram','Linkedin','Facebook'].map\\(n => n + ': ' + \\(l[n] ? 'yes' : 'no'\\)\\).join\\('\\\\n'\\)\\)\")",
       "Bash(node -e \"const l = require\\('lucide-react'\\); const keys = Object.keys\\(l\\).filter\\(k => /instagram|linkedin|facebook/i.test\\(k\\)\\); console.log\\(keys\\)\")",
       "Bash(node -e \"const l = require\\('lucide-react'\\); console.log\\(Object.keys\\(l\\).filter\\(k => /social|share|link/i.test\\(k\\)\\).slice\\(0,20\\)\\)\")",
-      "Bash(node -e \"console.log\\(require\\('lucide-react/package.json'\\).version\\)\")"
+      "Bash(node -e \"console.log\\(require\\('lucide-react/package.json'\\).version\\)\")",
+      "Bash(node -e \"const l = require\\('lucide-react'\\); console.log\\(l['Bell'] ? 'Bell: yes' : 'Bell: no'\\)\")"
     ]
   }
 }
