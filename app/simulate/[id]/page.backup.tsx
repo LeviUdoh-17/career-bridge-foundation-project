@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 const TEAL = "#4DC5D2";
 const NAVY = "#003359";
@@ -195,15 +195,6 @@ export default function SimulatePage() {
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [muted, setMuted] = useState(true);
 
-  // Supporting evidence state
-  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
-  const [attachedUrls, setAttachedUrls] = useState<string[]>([]);
-  const [fileError, setFileError] = useState("");
-  const [urlInput, setUrlInput] = useState("");
-  const [urlError, setUrlError] = useState("");
-  const [dragOver, setDragOver] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
   const prompt = PROMPTS[currentStep];
   const response: StepResponse = responses[currentStep] ?? {};
   const mode = response.mode ?? "typed";
@@ -236,7 +227,6 @@ export default function SimulatePage() {
         const data = JSON.parse(saved);
         if (typeof data.currentStep === "number") setCurrentStep(data.currentStep);
         if (data.responses) setResponses(data.responses);
-        if (data.attachedUrls) setAttachedUrls(data.attachedUrls);
       }
     } catch { /* ignore */ }
   }, []);
@@ -248,14 +238,14 @@ export default function SimulatePage() {
       try {
         localStorage.setItem(
           "sim-product-strategy",
-          JSON.stringify({ currentStep, responses, attachedUrls })
+          JSON.stringify({ currentStep, responses })
         );
         setLastSaved(new Date());
         setSaveStatus("saved");
       } catch { /* ignore */ }
       setTimeout(() => setSaveStatus("idle"), 2000);
     }, 500);
-  }, [currentStep, responses, attachedUrls]);
+  }, [currentStep, responses]);
 
   // ── Auto-save every 30 seconds
   useEffect(() => {
@@ -887,224 +877,6 @@ export default function SimulatePage() {
                 </div>
               </div>
             )}
-
-            {/* ── SUPPORTING EVIDENCE ─────────────────────────────── */}
-            <div className="mb-8">
-              {/* Section header */}
-              <div className="flex items-baseline gap-2 mb-4">
-                <span
-                  className="text-xs font-semibold uppercase"
-                  style={{ color: NAVY, letterSpacing: "0.13em", fontSize: "11px" }}
-                >
-                  Supporting Evidence
-                </span>
-                <span className="text-xs" style={{ color: "#aaa" }}>
-                  (optional)
-                </span>
-              </div>
-
-              {/* File upload zone */}
-              <div
-                className="mb-4"
-                onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
-                onDragLeave={() => setDragOver(false)}
-                onDrop={(e) => {
-                  e.preventDefault();
-                  setDragOver(false);
-                  setFileError("");
-                  const newFiles = Array.from(e.dataTransfer.files);
-                  const allowed = ["application/pdf", "application/msword",
-                    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                    "application/vnd.ms-excel",
-                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                    "application/vnd.ms-powerpoint",
-                    "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-                    "image/png", "image/jpeg", "text/csv"];
-                  const combined = [...uploadedFiles, ...newFiles];
-                  if (combined.length > 3) { setFileError("Maximum 3 files allowed."); return; }
-                  for (const f of newFiles) {
-                    if (!allowed.includes(f.type)) { setFileError(`"${f.name}" is not an accepted file type.`); return; }
-                    if (f.size > 10 * 1024 * 1024) { setFileError(`"${f.name}" exceeds the 10MB limit.`); return; }
-                  }
-                  setUploadedFiles(combined);
-                }}
-              >
-                <div
-                  onClick={() => fileInputRef.current?.click()}
-                  className="flex flex-col items-center justify-center py-8 px-6 cursor-pointer transition-colors"
-                  style={{
-                    border: `2px dashed ${dragOver ? TEAL : "#D5DCE8"}`,
-                    backgroundColor: dragOver ? "rgba(77,197,210,0.04)" : "#fff",
-                  }}
-                >
-                  {/* Upload cloud icon */}
-                  <svg
-                    width="28" height="28" viewBox="0 0 24 24" fill="none"
-                    stroke={dragOver ? TEAL : "#bbb"} strokeWidth="1.5"
-                    strokeLinecap="round" strokeLinejoin="round"
-                    className="mb-2"
-                  >
-                    <polyline points="16,16 12,12 8,16" />
-                    <line x1="12" y1="12" x2="12" y2="21" />
-                    <path d="M20.39,18.39A5,5,0,0,0,18,9h-1.26A8,8,0,1,0,3,16.3" />
-                  </svg>
-                  <p className="text-sm" style={{ color: "#555" }}>
-                    Drag &amp; drop files here, or{" "}
-                    <span
-                      className="underline"
-                      style={{ color: "#006FAD" }}
-                    >
-                      browse
-                    </span>
-                  </p>
-                  <p className="text-xs mt-1.5" style={{ color: "#bbb" }}>
-                    PDF, DOCX, XLSX, PPTX, PNG, JPG, CSV — max 10MB each — up to 3 files
-                  </p>
-                </div>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  multiple
-                  accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.png,.jpg,.jpeg,.csv"
-                  className="hidden"
-                  onChange={(e) => {
-                    setFileError("");
-                    const newFiles = Array.from(e.target.files ?? []);
-                    const allowed = ["application/pdf", "application/msword",
-                      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                      "application/vnd.ms-excel",
-                      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                      "application/vnd.ms-powerpoint",
-                      "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-                      "image/png", "image/jpeg", "text/csv"];
-                    const combined = [...uploadedFiles, ...newFiles];
-                    if (combined.length > 3) { setFileError("Maximum 3 files allowed."); e.target.value = ""; return; }
-                    for (const f of newFiles) {
-                      if (!allowed.includes(f.type)) { setFileError(`"${f.name}" is not an accepted file type.`); e.target.value = ""; return; }
-                      if (f.size > 10 * 1024 * 1024) { setFileError(`"${f.name}" exceeds the 10MB limit.`); e.target.value = ""; return; }
-                    }
-                    setUploadedFiles(combined);
-                    e.target.value = "";
-                  }}
-                />
-              </div>
-
-              {/* File error */}
-              {fileError && (
-                <p className="text-xs mb-2" style={{ color: "#e53e3e" }}>{fileError}</p>
-              )}
-
-              {/* File chips */}
-              {uploadedFiles.length > 0 && (
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {uploadedFiles.map((f, i) => (
-                    <div
-                      key={i}
-                      className="flex items-center gap-2 px-3 py-1.5 text-xs"
-                      style={{ backgroundColor: LIGHT_GREY, color: NAVY }}
-                    >
-                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke={NAVY} strokeWidth="2" strokeLinecap="round">
-                        <path d="M13,2H6A2,2,0,0,0,4,4V20a2,2,0,0,0,2,2H18a2,2,0,0,0,2-2V9Z" />
-                        <polyline points="13,2 13,9 20,9" />
-                      </svg>
-                      <span className="font-medium">{f.name}</span>
-                      <span style={{ color: "#aaa" }}>({(f.size / 1024).toFixed(0)} KB)</span>
-                      <button
-                        onClick={() => setUploadedFiles((prev) => prev.filter((_, j) => j !== i))}
-                        className="ml-1 font-bold"
-                        style={{ color: "#bbb" }}
-                        aria-label="Remove file"
-                      >
-                        ×
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {/* URL attachment */}
-              <div>
-                <div className="flex items-center gap-1.5 mb-2">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="2" strokeLinecap="round">
-                    <path d="M10,13a5,5,0,0,0,7.54.54l3-3a5,5,0,0,0-7.07-7.07l-1.72,1.71" />
-                    <path d="M14,11a5,5,0,0,0-7.54-.54l-3,3a5,5,0,0,0,7.07,7.07l1.71-1.71" />
-                  </svg>
-                  <span className="text-xs font-medium" style={{ color: "#888" }}>
-                    Attach a URL
-                  </span>
-                </div>
-                <div className="flex gap-2">
-                  <input
-                    type="url"
-                    value={urlInput}
-                    onChange={(e) => { setUrlInput(e.target.value); setUrlError(""); }}
-                    onKeyDown={(e) => {
-                      if (e.key !== "Enter") return;
-                      e.preventDefault();
-                      const trimmed = urlInput.trim();
-                      if (!trimmed) return;
-                      if (!isValidUrl(trimmed)) { setUrlError("Please enter a valid URL starting with https://"); return; }
-                      if (attachedUrls.includes(trimmed)) { setUrlError("This URL has already been added."); return; }
-                      setAttachedUrls((prev) => [...prev, trimmed]);
-                      setUrlInput("");
-                      setUrlError("");
-                    }}
-                    placeholder="https://docs.google.com/..."
-                    className="flex-1 px-3 py-2 text-sm"
-                    style={{ border: `1px solid ${BORDER}`, color: "#333", outline: "none", fontFamily: "inherit" }}
-                    onFocus={(e) => (e.target.style.borderColor = TEAL)}
-                    onBlur={(e) => (e.target.style.borderColor = BORDER)}
-                  />
-                  <button
-                    onClick={() => {
-                      const trimmed = urlInput.trim();
-                      if (!trimmed) return;
-                      if (!isValidUrl(trimmed)) { setUrlError("Please enter a valid URL starting with https://"); return; }
-                      if (attachedUrls.includes(trimmed)) { setUrlError("This URL has already been added."); return; }
-                      setAttachedUrls((prev) => [...prev, trimmed]);
-                      setUrlInput("");
-                      setUrlError("");
-                    }}
-                    className="px-4 py-2 text-xs font-medium text-white shrink-0"
-                    style={{ backgroundColor: "#006FAD" }}
-                  >
-                    Add
-                  </button>
-                </div>
-
-                {/* URL error */}
-                {urlError && (
-                  <p className="text-xs mt-1" style={{ color: "#e53e3e" }}>{urlError}</p>
-                )}
-
-                {/* URL chips */}
-                {attachedUrls.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mt-3">
-                    {attachedUrls.map((url, i) => (
-                      <div
-                        key={i}
-                        className="flex items-center gap-2 px-3 py-1.5 text-xs max-w-full"
-                        style={{ backgroundColor: "#EBF4FB", color: "#006FAD" }}
-                      >
-                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#006FAD" strokeWidth="2" strokeLinecap="round">
-                          <path d="M10,13a5,5,0,0,0,7.54.54l3-3a5,5,0,0,0-7.07-7.07l-1.72,1.71" />
-                          <path d="M14,11a5,5,0,0,0-7.54-.54l-3,3a5,5,0,0,0,7.07,7.07l1.71-1.71" />
-                        </svg>
-                        <span className="truncate" style={{ maxWidth: "240px" }}>{url}</span>
-                        <button
-                          onClick={() => setAttachedUrls((prev) => prev.filter((_, j) => j !== i))}
-                          className="ml-1 font-bold shrink-0"
-                          style={{ color: "#6aabce" }}
-                          aria-label="Remove URL"
-                        >
-                          ×
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
 
             {/* ── NAVIGATION BUTTONS ─────────────────────────────── */}
             <div className="flex items-center justify-between pt-2 pb-16">
