@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 
 const TEAL = "#4DC5D2";
 const NAVY = "#003359";
@@ -11,6 +12,7 @@ const LIGHT_GREY = "#F3F3F3";
 const simulations = [
   {
     id: 1,
+    slug: "product-strategy",
     title: "Product Strategy",
     company: "Nexus Bank",
     industry: "Financial Services",
@@ -22,6 +24,7 @@ const simulations = [
   },
   {
     id: 2,
+    slug: "customer-research-and-insights",
     title: "Customer Research and Insights",
     company: "Vitara Health",
     industry: "HealthTech",
@@ -33,6 +36,7 @@ const simulations = [
   },
   {
     id: 3,
+    slug: "ideation-and-prioritisation",
     title: "Ideation and Prioritisation",
     company: "Stackly",
     industry: "SaaS",
@@ -44,6 +48,7 @@ const simulations = [
   },
   {
     id: 4,
+    slug: "agile-product-development",
     title: "Agile Product Development",
     company: "Orbis Digital",
     industry: "Software Development",
@@ -55,6 +60,7 @@ const simulations = [
   },
   {
     id: 5,
+    slug: "ux-and-ui-design",
     title: "UX and UI Design",
     company: "Movo",
     industry: "Consumer Mobile",
@@ -66,6 +72,7 @@ const simulations = [
   },
   {
     id: 6,
+    slug: "pricing-strategies",
     title: "Pricing Strategies",
     company: "Lumora",
     industry: "EdTech",
@@ -77,6 +84,7 @@ const simulations = [
   },
   {
     id: 7,
+    slug: "product-launch",
     title: "Product Launch",
     company: "Crest Consumer",
     industry: "Consumer Goods",
@@ -88,6 +96,7 @@ const simulations = [
   },
   {
     id: 8,
+    slug: "metrics-and-analytics",
     title: "Metrics and Analytics",
     company: "Dataflow",
     industry: "Analytics",
@@ -99,6 +108,7 @@ const simulations = [
   },
   {
     id: 9,
+    slug: "stakeholder-management",
     title: "Stakeholder Management",
     company: "Bridgepoint",
     industry: "Infrastructure",
@@ -110,6 +120,7 @@ const simulations = [
   },
   {
     id: 10,
+    slug: "customer-acquisition",
     title: "Customer Acquisition",
     company: "Spark Retail",
     industry: "E-commerce",
@@ -121,6 +132,7 @@ const simulations = [
   },
   {
     id: 11,
+    slug: "go-to-market-strategy",
     title: "Go-to-Market Strategy",
     company: "Vanta Global",
     industry: "International Retail",
@@ -132,6 +144,7 @@ const simulations = [
   },
   {
     id: 12,
+    slug: "product-market-fit",
     title: "Product Market Fit",
     company: "Peakform",
     industry: "Sports Technology",
@@ -143,6 +156,7 @@ const simulations = [
   },
   {
     id: 13,
+    slug: "roadmap-development",
     title: "Roadmap Development",
     company: "Claros",
     industry: "Enterprise Software",
@@ -154,6 +168,7 @@ const simulations = [
   },
   {
     id: 14,
+    slug: "pitch-deck-creation",
     title: "Pitch Deck Creation",
     company: "Founded",
     industry: "Venture Capital",
@@ -522,8 +537,8 @@ export default function SimulatePage() {
                       <ClockIcon />
                       {sim.time}
                     </span>
-                    <a
-                      href="#"
+                    <Link
+                      href={`/simulate/${sim.slug}`}
                       className="text-sm font-medium"
                       style={{ color: TEAL }}
                       onMouseEnter={(e) =>
@@ -534,7 +549,7 @@ export default function SimulatePage() {
                       }
                     >
                       Start Simulation →
-                    </a>
+                    </Link>
                   </div>
                 </div>
               ))}
