@@ -237,6 +237,84 @@ export const getApiDocs = async () => {
               result: { $ref: "#/components/schemas/OverallSimulationResult" },
             },
           },
+          AttemptState: {
+            type: "object",
+            properties: {
+              id: { type: "string" },
+              simulation_id: { type: "string" },
+              candidate_name: { type: "string" },
+              candidate_email: { type: "string", format: "email" },
+              responses: {
+                type: "object",
+                additionalProperties: true,
+              },
+              status: { type: "string" },
+              current_step: { type: "integer", nullable: true },
+              last_saved_at: { type: "string", format: "date-time", nullable: true },
+            },
+          },
+          AttemptStateResponse: {
+            type: "object",
+            properties: {
+              success: { type: "boolean" },
+              attempt: { $ref: "#/components/schemas/AttemptState" },
+            },
+          },
+          AttemptAutosaveRequest: {
+            type: "object",
+            properties: {
+              current_step: { type: "integer", minimum: 1 },
+              last_saved_at: { type: "string", format: "date-time" },
+              drafts: {
+                type: "object",
+                additionalProperties: { type: "string" },
+                description:
+                  "Draft text keyed by prompt key (e.g. prompt_1 or 1). Values are saved as draft_text in responses.",
+              },
+              responses: {
+                type: "object",
+                additionalProperties: true,
+                description: "Optional direct responses patch merged into responses JSON.",
+              },
+            },
+          },
+          ChatRequest: {
+            type: "object",
+            required: ["message", "attempt_id", "prompt_index"],
+            properties: {
+              message: { type: "string" },
+              taskTitle: { type: "string" },
+              taskDescription: { type: "string" },
+              taskGuidance: { type: "string" },
+              attempt_id: { type: "string" },
+              prompt_index: { type: "integer" },
+            },
+          },
+          ChatMessage: {
+            type: "object",
+            properties: {
+              id: { type: "string" },
+              attempt_id: { type: "string" },
+              prompt_index: { type: "integer" },
+              role: { type: "string", enum: ["user", "assistant", "system"] },
+              content: { type: "string" },
+              task_title: { type: "string", nullable: true },
+              task_description: { type: "string", nullable: true },
+              task_guidance: { type: "string", nullable: true },
+              created_at: { type: "string", format: "date-time" },
+            },
+          },
+          AttemptChatHistoryResponse: {
+            type: "object",
+            properties: {
+              success: { type: "boolean" },
+              attempt_id: { type: "string" },
+              messages: {
+                type: "array",
+                items: { $ref: "#/components/schemas/ChatMessage" },
+              },
+            },
+          },
         },
       },
     },
