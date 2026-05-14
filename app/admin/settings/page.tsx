@@ -1,11 +1,7 @@
 import React from 'react'
+import Link from 'next/link'
 import { ExternalLink } from 'lucide-react'
 import packageJson from '@/package.json'
-
-const ADMIN_EMAILS = (process.env.ADMIN_EMAILS ?? '')
-  .split(',')
-  .map(e => e.trim())
-  .filter(Boolean)
 
 const SUPABASE_PROJECT_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
   ? `${process.env.NEXT_PUBLIC_SUPABASE_URL.replace('.supabase.co', '')}.supabase.co`.replace(
@@ -22,32 +18,26 @@ export default function SettingsPage() {
         <p className="text-sm mt-1 text-slate-600">Environment and system configuration</p>
       </div>
 
-      {/* Admin emails */}
+      {/* Team management */}
       <section className="bg-white rounded-lg overflow-hidden border border-slate-200">
-        <div className="px-6 py-4 border-b border-slate-200">
-          <h2 className="text-sm font-semibold text-slate-900">Authorised admins</h2>
-          <p className="text-xs text-slate-600 mt-1">
-            Set via the <code className="text-teal/80 font-mono text-xs">ADMIN_EMAILS</code> environment variable, comma-separated.
-          </p>
+        <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+          <div>
+            <h2 className="text-sm font-semibold text-slate-900">Team & access</h2>
+            <p className="text-xs text-slate-600 mt-1">
+              Admins and reviewers are managed via role-based access control.
+            </p>
+          </div>
+          <Link
+            href="/admin/team"
+            className="text-xs font-medium text-teal hover:text-teal/80 transition-colors"
+          >
+            Manage team →
+          </Link>
         </div>
-        <div className="divide-y divide-slate-200">
-          {ADMIN_EMAILS.length === 0 ? (
-            <div className="px-6 py-4 text-sm text-slate-600 italic">
-              No ADMIN_EMAILS set — all authenticated users can access admin.
-            </div>
-          ) : (
-            ADMIN_EMAILS.map(email => (
-              <div key={email} className="flex items-center gap-3 px-6 py-3">
-                <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0 bg-teal/10 border border-teal/30 text-teal">
-                  {email[0].toUpperCase()}
-                </div>
-                <span className="text-sm text-slate-900 font-mono">{email}</span>
-                <span className="ml-auto text-xs px-2.5 py-1 rounded-full border border-emerald-300 bg-emerald-50 text-emerald-700">
-                  admin
-                </span>
-              </div>
-            ))
-          )}
+        <div className="px-6 py-4 text-sm text-slate-600">
+          Role assignments (admin, reviewer) are stored in the{' '}
+          <code className="font-mono text-xs text-teal/80">user_roles</code> table and
+          embedded in JWTs via the custom access token hook.
         </div>
       </section>
 
@@ -60,6 +50,38 @@ export default function SettingsPage() {
           <InfoRow label="App name" value={packageJson.name} />
           <InfoRow label="Version" value={`v${packageJson.version}`} />
           <InfoRow label="Next.js" value={packageJson.dependencies.next} />
+        </div>
+      </section>
+
+      {/* API Docs */}
+      <section className="bg-white rounded-lg overflow-hidden border border-slate-200">
+        <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+          <div>
+            <h2 className="text-sm font-semibold text-slate-900">API Documentation</h2>
+            <p className="text-xs text-slate-600 mt-1">
+              Interactive OpenAPI 3.0 reference for all admin, reviewer, and public routes.
+            </p>
+          </div>
+          <Link
+            href="/api-docs"
+            target="_blank"
+            className="flex items-center gap-1.5 text-sm text-teal hover:text-teal/80 transition-colors font-medium"
+          >
+            Open Swagger UI
+            <ExternalLink size={12} />
+          </Link>
+        </div>
+        <div className="divide-y divide-slate-200">
+          <div className="flex items-center justify-between px-6 py-3">
+            <span className="text-xs text-slate-600 font-medium uppercase tracking-widest">JSON spec</span>
+            <a
+              href="/api/docs"
+              target="_blank"
+              className="text-sm font-mono text-teal hover:text-teal/80 transition-colors"
+            >
+              /api/docs
+            </a>
+          </div>
         </div>
       </section>
 

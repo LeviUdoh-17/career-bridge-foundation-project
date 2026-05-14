@@ -1,11 +1,6 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
-const ADMIN_EMAILS = (process.env.ADMIN_EMAILS ?? '')
-  .split(',')
-  .map(e => e.trim())
-  .filter(Boolean)
-
 export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request })
 
@@ -32,18 +27,48 @@ export async function middleware(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
 
   const { pathname } = request.nextUrl
-  const isAdminPath = pathname.startsWith('/admin') || pathname.startsWith('/api/admin')
-  const isLoginPage = pathname === '/admin/login'
 
-  if (isAdminPath && !isLoginPage) {
-    if (!user) {
-      const url = request.nextUrl.clone()
-      url.pathname = '/admin/login'
-      return NextResponse.redirect(url)
+  const isAdminPath    = pathname.startsWith('/admin')    || pathname.startsWith('/api/admin')
+  const isAdminLogin   = pathname === '/admin/login'
+  const isReviewerPath = pathname.startsWith('/reviewer') || pathname.startsWith('/api/reviewer')
+
+  // Determine role. Fast path: JWT app_metadata (set by custom_access_token_hook).
+  // Fallback: DB query for sessions that predate the hook being enabled.
+  let userRole = 'candidate'
+
+  if (user) {
+    const appMeta = (user.app_metadata ?? {}) as { user_role?: string }
+    if (appMeta.user_role) {
+      userRole = appMeta.user_role
+    } else {
+      // Anon key + user session cookie → RLS lets users SELECT their own row
+      const { data } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', user.id)
+        .maybeSingle()
+      userRole = data?.role ?? 'candidate'
     }
+  }
 
-    const email = user.email ?? ''
-    if (ADMIN_EMAILS.length > 0 && !ADMIN_EMAILS.includes(email)) {
+  // ── Admin protection ──────────────────────────────────────────────────────
+  // Redirect non-admins to / (not /admin/login) — the admin area is invisible
+  // to regular users and should not reveal it even exists.
+  if (isAdminPath && !isAdminLogin) {
+    if (!user || !['admin', 'super_admin'].includes(userRole)) {
+      if (pathname.startsWith('/api/')) {
+        return new NextResponse(JSON.stringify({ error: 'Forbidden' }), {
+          status: 403,
+          headers: { 'Content-Type': 'application/json' },
+        })
+      }
+      return NextResponse.redirect(new URL('/', request.url))
+    }
+  }
+
+  // ── Reviewer protection ───────────────────────────────────────────────────
+  if (isReviewerPath) {
+    if (!user) {
       if (pathname.startsWith('/api/')) {
         return new NextResponse(JSON.stringify({ error: 'Forbidden' }), {
           status: 403,
@@ -51,9 +76,18 @@ export async function middleware(request: NextRequest) {
         })
       }
       const url = request.nextUrl.clone()
-      url.pathname = '/admin/login'
-      url.searchParams.set('error', 'not_admin')
+      url.pathname = '/auth/login'
+      url.searchParams.set('next', '/reviewer')
       return NextResponse.redirect(url)
+    }
+    if (userRole !== 'reviewer') {
+      if (pathname.startsWith('/api/')) {
+        return new NextResponse(JSON.stringify({ error: 'Forbidden' }), {
+          status: 403,
+          headers: { 'Content-Type': 'application/json' },
+        })
+      }
+      return NextResponse.redirect(new URL('/', request.url))
     }
   }
 
